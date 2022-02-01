@@ -143,6 +143,7 @@ func Run(ctx context.Context, logger log.Logger, reg *prometheus.Registry, flags
 		},
 	)
 	s := profilestore.NewProfileStore(
+		reg,
 		logger,
 		tracerProvider.Tracer("profilestore"),
 		mStr,
