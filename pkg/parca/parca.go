@@ -26,6 +26,10 @@ import (
 	"github.com/go-kit/log/level"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/oklog/run"
+	"github.com/parca-dev/parca/pkg/columnstore"
+	"github.com/parca-dev/parca/pkg/metastore"
+	"github.com/parca-dev/parca/pkg/symbol"
+	"github.com/parca-dev/parca/pkg/symbolizer"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/prometheus/discovery"
 	"go.opentelemetry.io/otel"
@@ -49,7 +53,6 @@ import (
 	"github.com/parca-dev/parca/pkg/query"
 	"github.com/parca-dev/parca/pkg/scrape"
 	"github.com/parca-dev/parca/pkg/server"
-	"github.com/parca-dev/parca/pkg/storage"
 	"github.com/parca-dev/parca/pkg/symbol"
 	"github.com/parca-dev/parca/pkg/symbolizer"
 )
@@ -134,25 +137,31 @@ func Run(ctx context.Context, logger log.Logger, reg *prometheus.Registry, flags
 		return err
 	}
 
-	db := storage.OpenDB(
-		reg,
-		tracerProvider.Tracer("db"),
-		&storage.DBOptions{
-			Retention:            flags.StorageTSDBRetentionTime,
-			HeadExpensiveMetrics: flags.StorageTSDBExpensiveMetrics,
-		},
-	)
+	//db := storage.OpenDB(
+	//	reg,
+	//	tracerProvider.Tracer("db"),
+	//	&storage.DBOptions{
+	//		Retention:            flags.StorageTSDBRetentionTime,
+	//		HeadExpensiveMetrics: flags.StorageTSDBExpensiveMetrics,
+	//	},
+	//)
+
+	col := columnstore.New(reg)
+	colDB := col.DB("parca")
+	table := colDB.Table("stacktraces", profilestore.ParcaProfilingTableSchema(), logger)
+
 	s := profilestore.NewProfileStore(
 		reg,
 		logger,
 		tracerProvider.Tracer("profilestore"),
 		mStr,
+		table,
 	)
-	q := query.New(
+	q := query.NewColumnQueryAPI(
 		logger,
 		tracerProvider.Tracer("query-service"),
-		db,
 		mStr,
+		table,
 	)
 
 	ctx, cancel := context.WithCancel(ctx)
@@ -212,15 +221,15 @@ func Run(ctx context.Context, logger log.Logger, reg *prometheus.Registry, flags
 				sym.Close()
 			})
 	}
-	{
-		ctx, cancel := context.WithCancel(ctx)
-		gr.Add(func() error {
-			return db.Run(ctx)
-		}, func(err error) {
-			level.Debug(logger).Log("msg", "db exiting")
-			cancel()
-		})
-	}
+	//{
+	//	ctx, cancel := context.WithCancel(ctx)
+	//	gr.Add(func() error {
+	//		return db.Run(ctx)
+	//	}, func(err error) {
+	//		level.Debug(logger).Log("msg", "db exiting")
+	//		cancel()
+	//	})
+	//}
 	gr.Add(
 		func() error {
 			return discoveryManager.Run()
