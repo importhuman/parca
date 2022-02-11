@@ -17,7 +17,6 @@ import (
 	"context"
 
 	"github.com/google/pprof/profile"
-
 	"github.com/parca-dev/parca/pkg/metastore"
 	parcaprofile "github.com/parca-dev/parca/pkg/profile"
 )
