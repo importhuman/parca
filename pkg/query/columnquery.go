@@ -304,7 +304,7 @@ func (q *ColumnQueryAPI) renderReport(ctx context.Context, p *profile.Stacktrace
 				Flamegraph: fg,
 			},
 		}, nil
-	case pb.QueryRequest_REPORT_TYPE_PPROF_UNSPECIFIED:
+	case pb.QueryRequest_REPORT_TYPE_PPROF:
 		pp, err := GenerateFlatPprof(ctx, q.metaStore, p)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "failed to generate pprof: %v", err.Error())

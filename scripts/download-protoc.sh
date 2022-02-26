@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # The intent of script to install the standard protocol buffer implementation - protoc.
-set -eou pipefail
+set -xeou pipefail
 
 PROTOC_VERSION=${PROTOC_VERSION:-3.17.0}
 BUILD_DIR=${BUILD_DIR:-/tmp}
