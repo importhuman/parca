@@ -123,7 +123,7 @@ func TestColumnQueryAPIQuery(t *testing.T) {
 	require.Equal(t, int32(33), res.Report.(*pb.QueryResponse_Flamegraph).Flamegraph.Height)
 
 	res, err = api.Query(ctx, &pb.QueryRequest{
-		ReportType: pb.QueryRequest_REPORT_TYPE_PPROF_UNSPECIFIED,
+		ReportType: pb.QueryRequest_REPORT_TYPE_PPROF,
 		Options: &pb.QueryRequest_Single{
 			Single: &pb.SingleProfile{
 				Query: `{job="default"}`,

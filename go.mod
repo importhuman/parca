@@ -36,6 +36,7 @@ require (
 	github.com/prometheus/client_golang v1.12.1
 	github.com/prometheus/common v0.32.1
 	github.com/prometheus/prometheus v1.8.2-0.20211217191541-41f1a8125e66
+	github.com/segmentio/parquet-go v0.0.0-20220225102915-3b233f38f142
 	github.com/stretchr/testify v1.7.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.29.0
 	go.opentelemetry.io/otel v1.4.1
@@ -62,3 +63,5 @@ replace github.com/prometheus/prometheus => github.com/brancz/prometheus v1.8.2-
 replace go.opentelemetry.io/otel/metric => go.opentelemetry.io/otel/metric v0.24.0
 
 replace github.com/apache/arrow/go/v7 => github.com/zeroshade/arrow/go/v7 v7.0.0-20220117181957-a49180fd1f45
+
+replace github.com/segmentio/parquet-go => github.com/brancz/parquet-go v0.0.0-20220228131339-4f64d7949239
